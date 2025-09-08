@@ -3,6 +3,7 @@ const perguntas = {
     "Dance como uma galinha por 20 segundos.",
     "Imite um famoso até alguém adivinhar.",
     "Fale tudo como se fosse um vampiro educado.",
+    // Perguntas extras zoeira:
     "Faça uma dancinha ridícula por 15 segundos.",
     "Finja que está preso numa gaiola e peça ajuda.",
     "Conte uma piada sem graça e espere a reação.",
@@ -18,6 +19,7 @@ const perguntas = {
     "Diga a coisa mais ousada que já fez em um encontro.",
     "Revele seu crush secreto.",
     "Se pudesse trocar de corpo com alguém por um dia, quem seria e por quê?",
+    // Perguntas extras picante:
     "Conte uma situação embaraçosa que já viveu em um encontro.",
     "Faça um elogio ousado para alguém na sala.",
     "Dê um beijo imaginário na pessoa que estiver à sua esquerda.",
@@ -33,6 +35,7 @@ const perguntas = {
     "Ligue para alguém e cante 'Parabéns'.",
     "Troque de roupa com alguém na roda.",
     "Mime uma luta entre dois marshmallows gigantes.",
+    // Perguntas extras insano:
     "Faça uma coreografia maluca no meio da sala.",
     "Finja que está dirigindo um carro descontrolado.",
     "Imite um super-herói em apuros.",
@@ -46,14 +49,11 @@ const perguntas = {
   ]
 };
 
-// VARIÁVEIS GLOBAIS
+// NOVOS CONTROLES
 let jogadores = [];
 let shots = {};
 let desafiosCumpridos = {};
 let jogadorAtual = "";
-let ultimoJogador = "";
-let tempo = 15;
-let timerInterval;
 let rodadaAtual = 0;
 const rodadaBonusACada = 5;
 let desafiosUsados = {
@@ -63,13 +63,11 @@ let desafiosUsados = {
   todas: []
 };
 
-// SONS
 function tocarSom() {
   const audio = document.getElementById("sound-click");
   if (audio) audio.play();
 }
 
-// INÍCIO DO JOGO
 function criarCamposJogadores() {
   const qtd = document.getElementById("qtdJogadores").value;
   const campos = document.getElementById("camposJogadores");
@@ -109,7 +107,6 @@ function iniciarJogo() {
   proximaRodada();
 }
 
-// ESCOLHER PERGUNTA EVITANDO REPETIÇÃO
 function escolherPergunta(categoriaSelecionada) {
   let todas = [];
 
@@ -119,10 +116,12 @@ function escolherPergunta(categoriaSelecionada) {
     todas = perguntas[categoriaSelecionada] || [];
   }
 
+  // Verificar se todas as perguntas já foram usadas
   const usadas = desafiosUsados[categoriaSelecionada] || [];
   const restantes = todas.filter(p => !usadas.includes(p));
 
   if (restantes.length === 0) {
+    // Resetar desafios se todos foram usados
     desafiosUsados[categoriaSelecionada] = [];
     return escolherPergunta(categoriaSelecionada);
   }
@@ -133,26 +132,13 @@ function escolherPergunta(categoriaSelecionada) {
   return desafio;
 }
 
-// TIMER
 function iniciarTimer() {
-  tempo = 15;
-  document.getElementById("timer").innerText = `⏱️ Tempo restante: ${tempo}s`;
-  timerInterval = setInterval(() => {
-    tempo--;
-    document.getElementById("timer").innerText = `⏱️ Tempo restante: ${tempo}s`;
-    if (tempo <= 0) {
-      clearInterval(timerInterval);
-      alert(`${jogadorAtual} demorou demais e vai beber! 🍺`);
-      shots[jogadorAtual]++;
-      atualizarRanking();
-      proximaRodada();
-    }
-  }, 1000);
+  // Timer removido — sem limite de tempo
+  document.getElementById("timer").innerText = "";
 }
 
-// PRÓXIMA RODADA
 function proximaRodada() {
-  clearInterval(timerInterval);
+  // Sem clearInterval pois timer foi removido
   rodadaAtual++;
 
   let novoJogador;
@@ -161,8 +147,9 @@ function proximaRodada() {
   } while (novoJogador === jogadorAtual && jogadores.length > 1);
   jogadorAtual = novoJogador;
 
-  const categoria = document.getElementById("categoria").value;
+  let categoria = document.getElementById("categoria").value;
 
+  // RODADA BÔNUS
   let desafio;
   if (rodadaAtual % rodadaBonusACada === 0) {
     desafio = "🎁 RODADA BÔNUS: TODOS devem imitar um pato ou beber!";
@@ -177,10 +164,8 @@ function proximaRodada() {
   atualizarRanking();
 }
 
-// AÇÕES
 function cumprir() {
   tocarSom();
-  clearInterval(timerInterval);
   alert(`${jogadorAtual} cumpriu o desafio! ✅`);
   desafiosCumpridos[jogadorAtual]++;
   proximaRodada();
@@ -188,19 +173,17 @@ function cumprir() {
 
 function beber() {
   tocarSom();
-  clearInterval(timerInterval);
   shots[jogadorAtual]++;
   alert(`${jogadorAtual} recusou e tomou um shot! 🍺`);
   proximaRodada();
 }
 
-// RANKING E ESTATÍSTICAS
 function atualizarRanking() {
   let html = "<h3>Ranking 🏆</h3>";
 
   html += "<strong>✅ Corajosos:</strong><ul>";
   for (let nome in desafiosCumpridos) {
-    html += `<li>${nome}: ${desafiosCumpridos[nome]} desafio(s)</li>`;
+    html += `<li>${nome}: ${desafiosCumpridos[nome]} desafio(s) cumprido(s)</li>`;
   }
   html += "</ul>";
 
@@ -210,12 +193,13 @@ function atualizarRanking() {
   }
   html += "</ul>";
 
+  // HALL DA VERGONHA
   let maiorBebado = Object.keys(shots).reduce((a, b) => shots[a] > shots[b] ? a : b);
   html += `<p>😵 <strong>Hall da Vergonha:</strong> ${maiorBebado} bebeu mais! (${shots[maiorBebado]} shots)</p>`;
 
+  // ESTATÍSTICAS GERAIS
   const totalDesafios = Object.values(desafiosCumpridos).reduce((a, b) => a + b, 0);
   const totalShots = Object.values(shots).reduce((a, b) => a + b, 0);
-
   html += `<p>📊 <strong>Rodadas jogadas:</strong> ${rodadaAtual}</p>`;
   html += `<p>📈 <strong>Total de desafios cumpridos:</strong> ${totalDesafios}</p>`;
   html += `<p>🍻 <strong>Total de shots tomados:</strong> ${totalShots}</p>`;
