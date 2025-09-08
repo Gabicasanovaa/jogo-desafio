@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Desafio Proibido 🍻</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="container">
+    <h1>🍻 Desafio Proibido</h1>
+
+    <div id="inicio">
+      <label>Quantos jogadores?</label>
+      <input type="number" id="qtdJogadores" min="3" max="50" value="3"><br>
+      <button onclick="criarCamposJogadores()">Confirmar</button>
+    </div>
+
+    <div id="jogo" style="display: none;">
+      <h2>Insira os nomes:</h2>
+      <div id="camposJogadores"></div>
+      <label>Escolha a categoria:</label>
+      <select id="categoria">
+        <option value="todas">🔀 Aleatório</option>
+        <option value="zoeira">🤣 Zoeira</option>
+        <option value="picante">🔥 Picante</option>
+        <option value="insano">🤪 Insano</option>
+      </select><br>
+      <button onclick="iniciarJogo()">Iniciar Jogo</button>
+    </div>
+
+    <div id="rodada" style="display: none;">
+      <h2 id="jogadorAtual"></h2>
+      <p id="desafioTexto"></p>
+      <div id="timer"></div>
+      <button onclick="cumprir()">Cumprir ✅</button>
+      <button onclick="beber()">Beber 🍺</button>
+      <div id="ranking"></div>
+    </div>
+  </div>
+
+  <audio id="sound-click" src="https://www.myinstants.com/media/sounds/button-click.mp3" preload="auto"></audio>
+
+  <script src="script.js"></script>
+</body>
+</html>
